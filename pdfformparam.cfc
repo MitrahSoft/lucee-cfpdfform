@@ -22,8 +22,6 @@ component
 
 		variables.hasEndTag = arguments.hasEndTag;
 		variables.parent = arguments.parent;
-		
-		// dump(var="#ARGUMENTS#", label="pdfformparam init");	
 	}
 
 	public boolean function onStartTag
@@ -32,8 +30,7 @@ component
 			required struct caller
 		)
 	{
-		// dump(var="#ARGUMENTS#", label="pdfformparam onStartTag ARGUMENTS");
-		variables.parent.setFormField(arguments.attributes.name, arguments.attributes.value); //todo index
+		variables.parent.setFormField(arguments.attributes.name, arguments.attributes.value);
 
 		return true;
 	}
@@ -46,8 +43,6 @@ component
 			required string generatedContent
 		)
 	{
-		// dump(var="#ARGUMENTS#", label="pdfformparam onEndTag ARGUMENTS");
-		//variables.parent.setFormField(arguments.attributes.name, arguments.attributes.value); // todo index
 		WriteOutput(generatedContent);
 		
 		return false;

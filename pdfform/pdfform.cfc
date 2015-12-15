@@ -35,9 +35,9 @@ component {
 
     public boolean function setFormFields
         (
-            required string source,
-            required string destination,
-            required struct stFormFields,
+            required string source,           
+            string destination,         
+            required struct stFormFields, 
             boolean overwrite = true
         )
     {
@@ -45,8 +45,16 @@ component {
 
         local.ok = true;
 
-        local.fileIO   = createObject("java","java.io.FileInputStream").init(ARGUMENTS.source);  
-        local.fileIOS   = createObject("java","java.io.FileOutputStream").init(ARGUMENTS.destination);  
+        local.fileIO   = createObject("java","java.io.FileInputStream").init(ARGUMENTS.source);
+        
+        if ( structKeyExists(arguments, "destination")){
+            local.newPDF = ARGUMENTS.destination;
+        }
+        else {
+            local.newPDF = expandpath("#getTempDirectory()##createUUID()#.pdf");
+        }
+
+        local.fileIOS   = createObject("java","java.io.FileOutputStream").init(local.newPDF);  
         
         local.pdf = VARIABLES.reader.load(local.fileIO);
 
@@ -60,12 +68,16 @@ component {
             }
         }
 
-        local.pdf.save(local.fileIOS);        
+        local.pdf.save(local.fileIOS);
         local.pdf.close();
         local.fileIO.close();
         local.fileIOS.close();
+        
+        if ( !structKeyExists(arguments, "destination")){        
+            cfcontent( type = "application/pdf", file = local.newPDF, DeleteFile = "Yes" );
+            cfheader ( name="Content-Disposition", value="inline; filename=Example.pdf");
+        }
 
         return local.ok
-
     }
 }

@@ -10,7 +10,7 @@ component
 		source: { required:true, type:"string", hint="pathname (Todo: byte array)"},
 		result: { required:false, type:"string",    hint="read - structure containing form field values"},
 		
-		destination: { required:false, type:"string", hint="pathname (Todo: stream to browser)"},
+		destination: { required:false, type:"string", hint="pathname"},
 		overwrite: { required:false, type:"boolean", hint="overwrite the destination file. default no"}
 	};
 
@@ -52,10 +52,10 @@ component
 				break;
 			case "populate":
 				// check attributes for destination
-				if (! StructKeyExists(arguments.attributes, 'destination')) {
+				if ( StructKeyExists(arguments.attributes, 'destination') AND arguments.attributes.destination == "") {
 					throw(type="application", message="missing parameter", detail="'destination' not passed in");
 				}
-				
+
 				
 				// check overwrite
 				if (! StructKeyExists(arguments.attributes, 'overwrite')) {
@@ -83,15 +83,19 @@ component
 		)
 	{
 		switch(arguments.attributes.action) {
-			case "read":
-				
+			case "read":			
 
 				arguments.caller[arguments.attributes.result] = variables.pdfForm.getFormFields(arguments.attributes.source);
 
 				break;
 			case "populate":
-				variables.pdfForm.setFormFields(arguments.attributes.source,arguments.attributes.destination,variables.stFormFields);
-				 break;
+				if ( isDefined("arguments.attributes.destination")){
+					variables.pdfForm.setFormFields(source = arguments.attributes.source, destination = arguments.attributes.destination, stFormFields = variables.stFormFields);
+				}
+				else {
+					variables.pdfForm.setFormFields(source = arguments.attributes.source, stFormFields = variables.stFormFields);
+				}
+				break;
 			default: 
 				throw(type="application", message="unsupported action", detail="action=[read|populate]");
 		}
@@ -106,8 +110,6 @@ component
 			         integer index // TODO
 		)
 	{
-		//dump(var="#ARGUMENTS#", label="pdfform ARGUMENTS");
 		variables.stFormFields[ARGUMENTS.name] = ARGUMENTS.value;
-		//dump(var="#variables.stFormFields#", label="pdfform setFormField");
 	}
 }
