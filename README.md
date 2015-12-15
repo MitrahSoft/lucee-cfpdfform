@@ -3,9 +3,15 @@
 
 # WIP
 - Basic read and populate PDF Form Fields are implemented
+- stream to browser implemented
 
 # **PDF Box**
 This tag created using [PDF Box](http://pdfbox.apache.org/)
+
+
+## Installation
+- Save to Lucee context directory
+- you will need to restart Lucee when you have added these files (and after editting a tag)
 
 # **Sample usage**
 ````cfml
@@ -14,12 +20,21 @@ This tag created using [PDF Box](http://pdfbox.apache.org/)
 	<cfset pdfForm = ExpandPath('./my-pdf-form.pdf')>
 	<cfoutput><p>#pdfForm#</p></cfoutput>
 	
+	<h4>Read</h4>
 	<cfpdfform action="read" source="#pdfForm#" result="stFormFields">
 	<cfdump var="#stFormFields#" label="stFormFields">
 	
 	<hr>
-
+	<h4>Populate</h4>
 	<cfpdfform action="populate" source="#pdfForm#" destination="#ExpandPath('./populated-pdf-form.pdf')#" >
+		<cfpdfformparam name="Name"    value="CF Mitrah">
+		<cfpdfformparam name="Account" value="MitrahSoft">
+	</cfpdfform>
+
+
+	<hr>
+	<h4>Populate & write to browser</h4>
+	<cfpdfform action="populate" source="#pdfForm#">
 		<cfpdfformparam name="Name"    value="CF Mitrah">
 		<cfpdfformparam name="Account" value="MitrahSoft">
 	</cfpdfform>
@@ -50,9 +65,6 @@ Webonix done a very good job, but he used iText jars, which is licensed as [AGPL
 - One license per desktop, laptop or other end-user device installation
 
 
-## Lucee
-- Save to Lucee context directory
-- you will need to restart Lucee when you have added these files (and after editting a tag)
 
 ## **Problems**
 
