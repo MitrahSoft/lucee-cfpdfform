@@ -31,6 +31,12 @@ This tag created using [PDF Box](http://pdfbox.apache.org/)
 		<cfpdfformparam name="Account" value="MitrahSoft">
 	</cfpdfform>
 
+	<hr>
+	<h4>Populate and remove form fields</h4>
+	<cfpdfform action="populate" source="#pdfForm#" destination="#ExpandPath('./populated-pdf-form.pdf')#" flatten="true">
+		<cfpdfformparam name="Name"    value="CF Mitrah">
+		<cfpdfformparam name="Account" value="MitrahSoft">
+	</cfpdfform>
 
 	<hr>
 	<h4>Populate & write to browser</h4>
