@@ -11,7 +11,8 @@ component
 		result: { required:false, type:"string",    hint="read - structure containing form field values"},
 		
 		destination: { required:false, type:"string", hint="pathname"},
-		overwrite: { required:false, type:"boolean", hint="overwrite the destination file. default no"}
+		overwrite: { required:false, type:"boolean", hint="overwrite the destination file. default no"},
+		flatten: { required:false, type:"boolean", hint="remove form fields. default no"}
 	};
 
 
@@ -65,6 +66,11 @@ component
 					throw(type="application", message="Destination file exists", detail="#arguments.attributes.destination#");
 				}
 				
+				// flatten: default to false
+				if (! StructKeyExists(arguments.attributes, 'flatten')) {
+					arguments.attributes.flatten = false;
+				}
+				
 				// check for cfpdformparm
 				 break;
 			default: 
@@ -90,7 +96,7 @@ component
 				break;
 			case "populate":
 				if ( isDefined("arguments.attributes.destination")){
-					variables.pdfForm.setFormFields(source = arguments.attributes.source, destination = arguments.attributes.destination, stFormFields = variables.stFormFields);
+					variables.pdfForm.setFormFields(source = arguments.attributes.source, destination = arguments.attributes.destination, stFormFields = variables.stFormFields, flatten=arguments.attributes.flatten);
 				}
 				else {
 					variables.pdfForm.setFormFields(source = arguments.attributes.source, stFormFields = variables.stFormFields);

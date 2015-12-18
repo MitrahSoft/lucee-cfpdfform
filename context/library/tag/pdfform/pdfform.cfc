@@ -38,7 +38,8 @@ component {
             required string source,           
             string destination,         
             required struct stFormFields, 
-            boolean overwrite = true
+            boolean overwrite = true,
+			boolean flatten = false
         )
     {
         var local = {};
@@ -67,6 +68,10 @@ component {
                 fieldName.setValue(ARGUMENTS['stFormFields'][fieldName.getPartialName()]);
             }
         }
+		
+		if (ARGUMENTS.flatten) {
+			local.pdfForm.flatten(); // remove form fields; cannot be edited
+		}
 
         local.pdf.save(local.fileIOS);
         local.pdf.close();
