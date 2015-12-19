@@ -4,6 +4,8 @@
 # WIP
 - Basic read and populate PDF Form Fields are implemented
 - stream to browser implemented
+- retrieve the form field value into xmlData or exported to FDF file format
+- populate the form field value from xmlData or FDF file
 
 # **PDF Box**
 This tag created using [PDF Box](http://pdfbox.apache.org/)
@@ -25,6 +27,16 @@ This tag created using [PDF Box](http://pdfbox.apache.org/)
 	<cfdump var="#stFormFields#" label="stFormFields">
 	
 	<hr>
+	<h4>Read the form field value in XML format</h4>
+	<cfpdfform action="read" source="#pdfForm#" xmlData="myXMLData" result="stFormFields">
+	<cfdump var="#myXMLData#" label="XMLData">
+	
+	<hr>
+	<h4>Read the form field value and exported in FDF fileformat</h4>
+	<cfpdfform action="read" source="#pdfForm#" fdfData="populated-pdf-form.fdf">
+	<cfdump var="#myXMLData#" label="XMLData">
+	
+	<hr>
 	<h4>Populate</h4>
 	<cfpdfform action="populate" source="#pdfForm#" destination="#ExpandPath('./populated-pdf-form.pdf')#" >
 		<cfpdfformparam name="Name"    value="CF Mitrah">
@@ -43,6 +55,16 @@ This tag created using [PDF Box](http://pdfbox.apache.org/)
 	<cfpdfform action="populate" source="#pdfForm#">
 		<cfpdfformparam name="Name"    value="CF Mitrah">
 		<cfpdfformparam name="Account" value="MitrahSoft">
+	</cfpdfform>
+	
+	<hr>
+	<h4>Populate the form field value from XMLData string or XML file </h4>
+	<cfpdfform action="populate" source="#pdfForm#" XMLData="#ExpandPath('./Example.xml')#" destination="#ExpandPath('./populated-pdf-form.pdf')#" overwrite="true">
+	</cfpdfform>
+	
+	<hr>
+	<h4>Populate the form field value from FDF file </h4>
+	<cfpdfform action="populate" source="#pdfForm#" fdfData="populated-pdf-form.fdf" destination="#ExpandPath('./populated-pdf-form.pdf')#" overwrite="true">
 	</cfpdfform>
 
 	<cfcatch>

@@ -12,7 +12,9 @@ component
 		
 		destination: { required:false, type:"string", hint="pathname"},
 		overwrite: { required:false, type:"boolean", hint="overwrite the destination file. default no"},
-		flatten: { required:false, type:"boolean", hint="remove form fields. default no"}
+		flatten: { required:false, type:"boolean", hint="remove form fields. default no"},
+		XMLdata: { required:false, type:"string", hint="that returns XML data"},
+		fdfdata: { required:false, type:"string", hint="filename to be exported to"}
 	};
 
 
@@ -41,19 +43,35 @@ component
 		switch(arguments.attributes.action) {
 			case "read":
 				
-				//check result passed in
-				if (! StructKeyExists(arguments.attributes, 'result')) {
-					throw(type="application", message="missing parameter", detail="'result' not passed in");
+				//check passing attributes passed in
+				if ( StructKeyExists(arguments.attributes, 'fdfdata') && (StructKeyExists(arguments.attributes, 'xmlData') || StructKeyExists(arguments.attributes, 'result'))) {
+					throw(type="application", message="Attribute validation error", detail="It has an invalid attribute combination.");
+				}
+				else if ( !StructKeyExists(arguments.attributes, 'fdfdata') && ! StructKeyExists(arguments.attributes, 'result')) {
+					throw(type="application", message="missing parameter", detail="'result or fdfdata' was not passed in");
 				}
 				
 				if (! variables.hasEndTag) {
-					arguments.caller[arguments.attributes.result] = variables.pdfForm.getFormFields(arguments.attributes.source);
+					if ( StructKeyExists(arguments.attributes, 'result')){
+						arguments.caller[arguments.attributes.result] = variables.pdfForm.getFormFields(arguments.attributes.source);
+					}
+					if ( StructKeyExists(arguments.attributes, 'xmlData')) {
+						arguments.caller[arguments.attributes.xmlData] = variables.pdfForm.getXmlData((arguments.caller[arguments.attributes.result]));
+					}
+					if ( StructKeyExists(arguments.attributes, 'fdfdata')) {
+						arguments.caller[arguments.attributes.fdfdata] = variables.pdfForm.getFDFData(arguments.attributes.source, arguments.attributes.fdfdata);
+					}
 				}
 				
 				break;
 			case "populate":
+				//check passing attributes passed in
+				if ( StructKeyExists(arguments.attributes, 'fdfdata') && StructKeyExists(arguments.attributes, 'xmlData')) {
+					throw(type="application", message="Attribute validation error", detail="It has an invalid attribute combination.");
+				}
+
 				// check attributes for destination
-				if ( StructKeyExists(arguments.attributes, 'destination') AND arguments.attributes.destination == "") {
+				if ( StructKeyExists(arguments.attributes, 'destination') && arguments.attributes.destination == "") {
 					throw(type="application", message="missing parameter", detail="'destination' not passed in");
 				}
 
@@ -62,7 +80,7 @@ component
 				if (! StructKeyExists(arguments.attributes, 'overwrite')) {
 					arguments.attributes.overwrite = false;
 				}
-				if (! arguments.attributes.overwrite AND FileExists(arguments.attributes.destination) ) {
+				if (! arguments.attributes.overwrite && StructKeyExists(arguments.attributes, 'destination') && arguments.attributes.destination != "" && FileExists(arguments.attributes.destination) ) {
 					throw(type="application", message="Destination file exists", detail="#arguments.attributes.destination#");
 				}
 				
@@ -91,16 +109,33 @@ component
 		switch(arguments.attributes.action) {
 			case "read":			
 
-				arguments.caller[arguments.attributes.result] = variables.pdfForm.getFormFields(arguments.attributes.source);
+				if ( StructKeyExists(arguments.attributes, 'result')){
+					arguments.caller[arguments.attributes.result] = variables.pdfForm.getFormFields(arguments.attributes.source);
+				}
+				
+				if ( StructKeyExists(arguments.attributes, 'xmlData')) {
+					arguments.caller[arguments.attributes.xmlData] = variables.pdfForm.getXmlData((arguments.caller[arguments.attributes.result]));
+				}
+				
+				if ( StructKeyExists(arguments.attributes, 'fdfdata')) {
+					arguments.caller[arguments.attributes.fdfdata] = variables.pdfForm.getFDFData(arguments.attributes.source, arguments.attributes.fdfdata);
+				}
 
 				break;
 			case "populate":
-				if ( isDefined("arguments.attributes.destination")){
-					variables.pdfForm.setFormFields(source = arguments.attributes.source, destination = arguments.attributes.destination, stFormFields = variables.stFormFields, flatten=arguments.attributes.flatten);
+				if ( !isDefined("arguments.attributes.destination")){
+					arguments.attributes.destination = "";
 				}
-				else {
-					variables.pdfForm.setFormFields(source = arguments.attributes.source, stFormFields = variables.stFormFields);
+
+				if (!isDefined("arguments.attributes.fdfdata")){
+					arguments.attributes.fdfdata = "";					
 				}
+
+				if( !isDefined("arguments.attributes.XMLdata")){
+					arguments.attributes.XMLdata = "";
+				}
+
+					variables.pdfForm.setFormFields(source = arguments.attributes.source, destination = arguments.attributes.destination, stFormFields = variables.stFormFields, flatten=arguments.attributes.flatten, fdfdata = arguments.attributes.fdfdata, XMLdata = arguments.attributes.XMLdata);
 				break;
 			default: 
 				throw(type="application", message="unsupported action", detail="action=[read|populate]");
