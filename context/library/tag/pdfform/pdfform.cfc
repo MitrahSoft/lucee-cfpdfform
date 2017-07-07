@@ -1,13 +1,13 @@
 component {
 
-    VARIABLES.reader  = createObject("java","org.apache.pdfbox.pdmodel.PDDocument",  "lib/pdfbox/pdfbox-app-2.0.0-RC2.jar");
-    VARIABLES.fdf  = createObject("java","org.apache.pdfbox.pdmodel.fdf.FDFDocument",  "lib/pdfbox/pdfbox-app-2.0.0-RC2.jar");
+    VARIABLES.reader  = createObject("java","org.apache.pdfbox.pdmodel.PDDocument",  "lib/pdfbox/pdfbox-app-2.0.6.jar");
+    VARIABLES.fdf  = createObject("java","org.apache.pdfbox.pdmodel.fdf.FDFDocument",  "lib/pdfbox/pdfbox-app-2.0.6.jar");
 
     public any function init()
 
     {
-        VARIABLES.reader  = createObject("java","org.apache.pdfbox.pdmodel.PDDocument",  "lib/pdfbox/pdfbox-app-2.0.0-RC2.jar");
-        VARIABLES.fdf  = createObject("java","org.apache.pdfbox.pdmodel.fdf.FDFDocument",  "lib/pdfbox/pdfbox-app-2.0.0-RC2.jar");
+        VARIABLES.reader  = createObject("java","org.apache.pdfbox.pdmodel.PDDocument",  "lib/pdfbox/pdfbox-app-2.0.6.jar");
+        VARIABLES.fdf  = createObject("java","org.apache.pdfbox.pdmodel.fdf.FDFDocument",  "lib/pdfbox/pdfbox-app-2.0.6.jar");
 
         return THIS;
     }
