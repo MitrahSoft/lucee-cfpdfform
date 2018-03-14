@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="clean" basedir="." name="cfcamp2016-extension">
+	<description>cfpdfform</description>
+
+  <!-- load the build.properties -->
+  <property file="build.properties"/>
+
+  <!-- path defintions -->
+  <property name="src" location="source"/>
+  <property name="srcTags" location="source/tags"/>
+  <property name="srcImg" location="source/images"/>
+  <property name="srcFun" location="source/functions"/>
+  <property name="jars" location="jars"/>
+  <property name="temp" location="temp"/>
+  <property name="target"  location="target"/>
+
+  <!-- auto increment build number -->
+  <buildnumber file="build.number"/>
+
+  <target name="init" description="initalize the enviroment">
+    <!-- <tstamp/> -->
+    <!-- delete structure from previous build (if existing) -->
+    <delete dir="${temp}"/>
+    <delete dir="${target}"/>
+
+    <!-- create structure -->
+    <mkdir dir="${temp}"/>
+    <mkdir dir="${target}/"/>
+  </target>
+
+
+  <target name="createManifest" depends="init" description="create Manifest file" >
+    <tstamp>
+     <format property="NOW" pattern="yyyy-MM-dd HH:mm:ss" />
+    </tstamp>
+
+    <echo file="${temp}/META-INF/MANIFEST.MF">Manifest-Version: 1.0
+Built-Date: ${NOW}
+version: "${bundleversion}${build.number}"
+id: "${id}"
+name: "${label}"
+description: "${description}"
+release-type: ${releaseType}
+</echo>
+  </target>
+  <target name="zip" depends="createManifest" description="generate the distribution" >
+    
+   
+    <!-- copy the tags -->
+    <copy todir="${temp}/tags">
+      <fileset dir="${srcTags}">
+        <include name="**/*.cfc"/>
+        <include name="**/*.cfm"/>
+        <include name="**/*.jar"/>
+      </fileset>
+    </copy>
+    <!-- Zip everything  -->
+     <zip destfile="${target}/${bundlename}-${bundleversion}${build.number}.lex">
+        <zipfileset dir="${temp}"/>
+    </zip>
+		
+  </target>
+
+	<target name="clean"  depends="zip" description="clean up" >
+		<!-- <delete dir="${temp}"/> -->
+	</target>
+
+</project>
