@@ -25,6 +25,7 @@
 
     <!-- create structure -->
     <mkdir dir="${temp}"/>
+    <mkdir dir="${temp}"/>
     <mkdir dir="${target}/"/>
   </target>
 
@@ -54,6 +55,21 @@ release-type: ${releaseType}
         <include name="**/*.jar"/>
       </fileset>
     </copy>
+
+    <copy todir="${temp}">
+      <fileset dir="${src}">
+        <include name="config.xml"/>
+        <include name="Install.cfc"/>
+      </fileset>
+    </copy>
+
+    
+    <!-- Zip everything  -->
+     <zip destfile="${target}/extension.zip">
+        <zipfileset dir="${temp}"/>
+       <!--  <zipfileset dir="${temp}/classic" filemode="777"/>
+        <zipfileset dir="${temp}/flds" prefix="flds" filemode="777"/> -->
+    </zip>
     <!-- Zip everything  -->
      <zip destfile="${target}/${bundlename}-${bundleversion}${build.number}.lex">
         <zipfileset dir="${temp}"/>
