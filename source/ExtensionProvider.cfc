@@ -22,7 +22,8 @@ component displayname="extension provider" output="false" {
         QuerySetCell(apps,'label','&lt;cfpdfform /&gt;');
         QuerySetCell(apps,'description',desc);
         QuerySetCell(apps,'author','Mitrahsoft');
-        QuerySetCell(apps,'download','https://github.com/MitrahSoft/lucee-cfpdfform/blob/master/target/extension.zip');
+        QuerySetCell(apps,'download','https://github.com/MitrahSoft/lucee-cfpdfform/raw/master/target/extension.zip
+');
 
         return apps;
     }
