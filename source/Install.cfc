@@ -17,12 +17,12 @@
 					source="#path#tags/#tag#"
 					destination="#serverPath#/library/tag/">
 				</cfloop>
-				<cfdirectory action="copy" directory="#path#tags/pdfform" destination="#serverPath#/library/tag/" />
+				<cfdirectory action="copy" directory="#path#tags/pdfform/" destination="#serverPath#/library/tag/pdfform/" recurse="true" />
 			
 				<cfsavecontent variable="temp">
 					<cfoutput>
 						<p>Tag correctly installed. You will need to Restart Lucee for the functions to work.</p>
-					</cfoutput>				
+					</cfoutput>
 				</cfsavecontent>
 				
 				<cfset result.message = temp />
