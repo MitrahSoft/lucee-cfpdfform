@@ -101,7 +101,7 @@ component {
             local.newPDF = ARGUMENTS.destination;
         }
         else {
-            local.newPDF = expandpath("#getTempDirectory()##createUUID()#.pdf");
+            local.newPDF = expandpath( getTempDirectory() ) & createUUID() & ".pdf";
         }
 
         local.fileIOS   = createObject("java","java.io.FileOutputStream").init(local.newPDF);  
