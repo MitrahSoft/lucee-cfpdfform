@@ -12,8 +12,12 @@ This tag created using [PDF Box](http://pdfbox.apache.org/)
 
 
 ## Installation
-- Save to Lucee context directory
-- you will need to restart Lucee when you have added these files (and after editting a tag)
+- Download the `.lex` file from the repository directory [`/lucee-cfpdfform/target/`](https://github.com/MitrahSoft/lucee-cfpdfform/tree/master/target)
+- Then either:
+  - Copy the `.lex` file into the `deploy` directory for either the server, `WEB-INF/lucee-server/deploy/`, or the web context, `WEB-INF/lucee-context/deploy/`
+  - ...or...
+  - Open the the Lucee Administrator for the server or web context. Navigate to `Extension > Applications > Upload new extension (experimental)` and upload the selected `.lex` file. Ignore the note `Extension zip file` as a `.lex` file is just a renamed `.zip` file.
+- It is not necessary to restart Lucee after you have added this extension.
 
 # **Sample usage**
 ````cfml
@@ -21,21 +25,21 @@ This tag created using [PDF Box](http://pdfbox.apache.org/)
 
 	<cfset pdfForm = ExpandPath('./my-pdf-form.pdf')>
 	<cfoutput><p>#pdfForm#</p></cfoutput>
-	
+
 	<h4>Read</h4>
 	<cfpdfform action="read" source="#pdfForm#" result="stFormFields">
 	<cfdump var="#stFormFields#" label="stFormFields">
-	
+
 	<hr>
 	<h4>Read the form field value in XML format</h4>
 	<cfpdfform action="read" source="#pdfForm#" xmlData="myXMLData" result="stFormFields">
 	<cfdump var="#myXMLData#" label="XMLData">
-	
+
 	<hr>
 	<h4>Read the form field value and exported in FDF fileformat</h4>
 	<cfpdfform action="read" source="#pdfForm#" fdfData="populated-pdf-form.fdf">
 	<cfdump var="#myXMLData#" label="XMLData">
-	
+
 	<hr>
 	<h4>Populate</h4>
 	<cfpdfform action="populate" source="#pdfForm#" destination="#ExpandPath('./populated-pdf-form.pdf')#" >
@@ -56,12 +60,12 @@ This tag created using [PDF Box](http://pdfbox.apache.org/)
 		<cfpdfformparam name="Name"    value="CF Mitrah">
 		<cfpdfformparam name="Account" value="MitrahSoft">
 	</cfpdfform>
-	
+
 	<hr>
 	<h4>Populate the form field value from XMLData string or XML file </h4>
 	<cfpdfform action="populate" source="#pdfForm#" XMLData="#ExpandPath('./Example.xml')#" destination="#ExpandPath('./populated-pdf-form.pdf')#" overwrite="true">
 	</cfpdfform>
-	
+
 	<hr>
 	<h4>Populate the form field value from FDF file </h4>
 	<cfpdfform action="populate" source="#pdfForm#" fdfData="populated-pdf-form.fdf" destination="#ExpandPath('./populated-pdf-form.pdf')#" overwrite="true">
@@ -75,7 +79,7 @@ This tag created using [PDF Box](http://pdfbox.apache.org/)
 ## **Contributors**
 
 Idea & base code adapted from https://github.com/webonix/lucee-cfpdfform
-lucee-cfpdfform is authored by **[CF Mitrah](http://www.MitrahSoft.com/)** and everyone is welcome to contribute. 
+lucee-cfpdfform is authored by **[CF Mitrah](http://www.MitrahSoft.com/)** and everyone is welcome to contribute.
 
 ## **Downsides webonix cfpdfform implementation**
 
