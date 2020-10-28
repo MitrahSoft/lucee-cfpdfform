@@ -142,7 +142,7 @@ component
 				}
 
 				if( !isDefined("arguments.attributes.fontsize")){
-					arguments.attributes.fontsize = "";
+					arguments.attributes.fontsize = "0";
 				}
 
 					variables.pdfForm.setFormFields(source = arguments.attributes.source, destination = arguments.attributes.destination, stFormFields = variables.stFormFields, flatten=arguments.attributes.flatten, fdfdata = arguments.attributes.fdfdata, XMLdata = arguments.attributes.XMLdata, font = arguments.attributes.font, fontsize = arguments.attributes.fontsize);
