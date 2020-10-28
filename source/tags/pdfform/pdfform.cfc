@@ -2,12 +2,14 @@ component {
 
     VARIABLES.reader  = createObject("java","org.apache.pdfbox.pdmodel.PDDocument",  "lib/pdfbox/pdfbox-app-2.0.8.jar");
     VARIABLES.fdf  = createObject("java","org.apache.pdfbox.pdmodel.fdf.FDFDocument",  "lib/pdfbox/pdfbox-app-2.0.8.jar");
+    VARIABLES.pdtype0font  = createObject("java","org.apache.pdfbox.pdmodel.font.PDType0Font",  "lib/pdfbox/pdfbox-app-2.0.8.jar");
 
     public any function init()
 
     {
         VARIABLES.reader  = createObject("java","org.apache.pdfbox.pdmodel.PDDocument",  "lib/pdfbox/pdfbox-app-2.0.8.jar");
         VARIABLES.fdf  = createObject("java","org.apache.pdfbox.pdmodel.fdf.FDFDocument",  "lib/pdfbox/pdfbox-app-2.0.8.jar");
+        VARIABLES.pdtype0font  = createObject("java","org.apache.pdfbox.pdmodel.font.PDType0Font",  "lib/pdfbox/pdfbox-app-2.0.8.jar");
 
         return THIS;
     }
@@ -88,7 +90,9 @@ component {
             boolean overwrite = true,
             boolean flatten = false,
             string fdfdata,
-            string XMLdata
+            string XMLdata,
+            string font,
+            string fontsize
         )
     {
         var local = {};
@@ -109,6 +113,13 @@ component {
         local.pdf = VARIABLES.reader.load(local.fileIO);
 
         local.pdfForm = local.pdf.getDocumentCatalog().getAcroForm();
+
+        // Set font appearance
+        if ( structKeyExists(arguments, "font") && arguments.font!= ""){
+            local.pdfFont = PDType0Font.load(local.pdf, createObject("java","java.io.FileInputStream").init(ARGUMENTS.font), false);
+            local.fontName = local.pdfForm.getDefaultResources().add(local.pdfFont).getName();
+            local.pdfForm.setDefaultAppearance("/" & local.fontName & " " & ARGUMENTS.fontsize & " Tf 0 g");
+        }
 
         // For populating with fdfdata
         if ( structKeyExists(arguments, "fdfdata") && arguments.fdfdata != ""){

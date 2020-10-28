@@ -14,7 +14,9 @@ component
 		overwrite: { required:false, type:"boolean", hint="overwrite the destination file. default no"},
 		flatten: { required:false, type:"boolean", hint="remove form fields. default no"},
 		XMLdata: { required:false, type:"string", hint="that returns XML data"},
-		fdfdata: { required:false, type:"string", hint="filename to be exported to"}
+		fdfdata: { required:false, type:"string", hint="filename to be exported to"},
+		font: { required:false, type:"string", hint="pathname to embedable font. defaults to pdf source"},
+		fontsize: { required:false, type:"string", hint="font size. defaults to auto"}
 	};
 
 
@@ -135,7 +137,15 @@ component
 					arguments.attributes.XMLdata = "";
 				}
 
-					variables.pdfForm.setFormFields(source = arguments.attributes.source, destination = arguments.attributes.destination, stFormFields = variables.stFormFields, flatten=arguments.attributes.flatten, fdfdata = arguments.attributes.fdfdata, XMLdata = arguments.attributes.XMLdata);
+				if( !isDefined("arguments.attributes.font")){
+					arguments.attributes.font = "";
+				}
+
+				if( !isDefined("arguments.attributes.fontsize")){
+					arguments.attributes.fontsize = "";
+				}
+
+					variables.pdfForm.setFormFields(source = arguments.attributes.source, destination = arguments.attributes.destination, stFormFields = variables.stFormFields, flatten=arguments.attributes.flatten, fdfdata = arguments.attributes.fdfdata, XMLdata = arguments.attributes.XMLdata, font = arguments.attributes.font, fontsize = arguments.attributes.fontsize);
 				break;
 			default: 
 				throw(type="application", message="unsupported action", detail="action=[read|populate]");
