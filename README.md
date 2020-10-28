@@ -73,7 +73,7 @@ This tag created using [PDF Box](http://pdfbox.apache.org/)
 
 	<hr>
 	<h4>Unicode Support using embedded font</h4>
-	<cfpdfform action="populate" source="#pdfForm#" font="#expandpath('./font.tff')#" fontsize="10">
+	<cfpdfform action="populate" source="#pdfForm#" font="#expandpath('./font.ttf')#" fontsize="10">
 		<cfpdfformparam name="Name"    value="CF Mitrāh">
 		<cfpdfformparam name="Account" value="MitrāhSoft">
 	</cfpdfform>
