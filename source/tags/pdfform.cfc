@@ -16,7 +16,7 @@ component
 		XMLdata: { required:false, type:"string", hint="that returns XML data"},
 		fdfdata: { required:false, type:"string", hint="filename to be exported to"},
 		font: { required:false, type:"string", hint="pathname to embedable font. defaults to pdf source"},
-		fontsize: { required:false, type:"string", hint="font size. defaults to auto"}
+		fontsize: { required:false, type:"string", hint="font size. defaults to 0 for auto"}
 	};
 
 
