@@ -71,6 +71,13 @@ This tag created using [PDF Box](http://pdfbox.apache.org/)
 	<cfpdfform action="populate" source="#pdfForm#" fdfData="populated-pdf-form.fdf" destination="#ExpandPath('./populated-pdf-form.pdf')#" overwrite="true">
 	</cfpdfform>
 
+	<hr>
+	<h4>Unicode Support using embedded font</h4>
+	<cfpdfform action="populate" source="#pdfForm#" font="#expandpath('./font.ttf')#" fontsize="10">
+		<cfpdfformparam name="Name"    value="CF Mitrāh">
+		<cfpdfformparam name="Account" value="MitrāhSoft">
+	</cfpdfform>
+
 	<cfcatch>
 		<cfdump var="#cfcatch#">
 	</cfcatch>
