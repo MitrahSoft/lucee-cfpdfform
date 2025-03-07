@@ -1,91 +1,90 @@
-<cfcomponent>
+component {
 
-	<cffunction name="install" returntype="struct" output="no" hint="called from Lucee to install application">
-		<cfset variables.tags = ListToArray("pdfform.cfc,pdfformparam.cfc")>
-		<cfargument name="error" type="struct">
-		<cfargument name="path" type="string">
-		<cfargument name="config" type="struct">
-		
-		<cfset var result = {status = true, message = ""} />
-		<cfset var serverPath = getContextPath() />
-		
-		<cftry>
-			
-			<!--- Export the tag --->
-				<cfloop array="#variables.tags#" index="local.tag" >
-					<cffile action="copy"
-					source="#path#tags/#tag#"
-					destination="#serverPath#/library/tag/">
-				</cfloop>
-				<cfdirectory action="copy" directory="#path#tags/pdfform/" destination="#serverPath#/library/tag/pdfform/" recurse="true" />
-			
-				<cfsavecontent variable="temp">
-					<cfoutput>
-						<p>Tag correctly installed. You will need to Restart Lucee for the functions to work.</p>
-					</cfoutput>
-				</cfsavecontent>
-				
-				<cfset result.message = temp />
-			
-			<cfcatch type="any">            
-				<cfset result.status = false />
-				<cfset result.message = cfcatch.message />
-				<cflog file="lucee_extension_install" text="Error: #cfcatch.message#">
-			</cfcatch>
-		
-		</cftry>
-		
-		<cfreturn result />
-	
-	</cffunction>	
-	
-	<cffunction name="uninstall" returntype="struct" output="no" hint="called by Lucee to uninstall the application">
-		<cfargument name="path" type="any"/>
-		<cfargument name="config" type="any"/>
-		<cfscript>
-			var processResult = {
-				status = true,
-				message = ""};
-			var ssDir = "";
-			var serverPath = getContextPath();
-			processResult.status = deleteAsset("directory", "#serverPath#/library/tag/pdfform");
-			processResult.status = deleteAsset("file", "#serverPath#/library/tag/pdfform.cfc");
-			processResult.status = deleteAsset("file", "#serverPath#/library/tag/pdfformparam.cfc");
-		</cfscript>
-		
-		<cfif processResult.status>
-			<cfset processResult.message = "Uninstall successful" />
-		<cfelse>
-			<cfset processResult.message = "Error uninstalling: Please see logs and delete manually" />
-		</cfif>
-		
-		<cfreturn processResult />
-	</cffunction>
-	
-	
-	<cffunction name="deleteAsset" returntype="boolean" output="no" hint="called in the uninstall process" access="private">
-		<cfargument name="type" required="true" hint="Accepts file|directory" />
-		<cfargument name="asset" required="true" hint="location of asset to be removed" />
-		
-		<cfset var status = true />
-		
-		<cftry>
-			<cfif arguments.type EQ "directory">
-				<cfdirectory action="delete" directory="#arguments.asset#" recurse="true" />
-			<cfelse>
-				<cffile action="delete" file="#arguments.asset#" />
-			</cfif>
-			<cfcatch type="any">
-				<cfset local.errMsg = "Cannot delete #arguments.type# #arguments.asset# | #cfcatch.message#" />
-				<cflog file="lucee_extension_poi" text="#local.errMsg#" />
-				<cfset status = false/>
-			</cfcatch>
-		</cftry>
-		<cfreturn status />
-	</cffunction>
-	
-	<cffunction name="getContextPath" access="private" returntype="string">
-		<cfreturn expandPath('{lucee-#request.adminType#-directory}')>
-	</cffunction>
-	
- </cfcomponent>
+	function install(struct error, string path, struct config) returnstruct {
+		/**
+		 * Called from Lucee to install application
+		 * @error {struct} Error structure
+		 * @path {string} Path to the installation directory
+		 * @config {struct} Configuration structure
+		 * @return {struct} Result structure with status and message
+		 */
+		var local = {};
+		local.result = {status = true, message = ""};
+		local.serverPath = getContextPath();
+		local.tags = ListToArray("pdfform.cfc,pdfformparam.cfc");
+
+		try {
+			// Export the tag
+			for (local.tag in local.tags) {
+				fileCopy(arguments.path & "tags/" & local.tag, local.serverPath & "/library/tag/");
+			}
+			directoryCopy(arguments.path & "tags/pdfform/", local.serverPath & "/library/tag/pdfform/", true);
+
+			local.temp = "<p>Tag correctly installed. You will need to Restart Lucee for the functions to work.</p>";
+			local.result.message = local.temp;
+		} catch (any e) {
+			local.result.status = false;
+			local.result.message = e.message;
+			log("Error: " & e.message, "lucee_extension_install");
+		}
+
+		return local.result;
+	}
+
+	function uninstall(any path, any config) returnstruct {
+		/**
+		 * Called by Lucee to uninstall the application
+		 * @path {any} Path to the installation directory
+		 * @config {any} Configuration structure
+		 * @return {struct} Result structure with status and message
+		 */
+		var local = {};
+		local.processResult = {status = true, message = ""};
+		local.serverPath = getContextPath();
+
+		local.processResult.status = deleteAsset("directory", local.serverPath & "/library/tag/pdfform");
+		local.processResult.status = deleteAsset("file", local.serverPath & "/library/tag/pdfform.cfc");
+		local.processResult.status = deleteAsset("file", local.serverPath & "/library/tag/pdfformparam.cfc");
+
+		if (local.processResult.status) {
+			local.processResult.message = "Uninstall successful";
+		} else {
+			local.processResult.message = "Error uninstalling: Please see logs and delete manually";
+		}
+
+		return local.processResult;
+	}
+
+	private boolean function deleteAsset(required string type, required string asset) {
+		/**
+		 * Called in the uninstall process
+		 * @type {string} Accepts file|directory
+		 * @asset {string} Location of asset to be removed
+		 * @return {boolean} Status of the deletion process
+		 */
+		var local = {};
+		local.status = true;
+
+		try {
+			if (arguments.type == "directory") {
+				directoryDelete(arguments.asset, true);
+			} else {
+				fileDelete(arguments.asset);
+			}
+		} catch (any e) {
+			local.errMsg = "Cannot delete " & arguments.type & " " & arguments.asset & " | " & e.message;
+			log(local.errMsg, "lucee_extension_poi");
+			local.status = false;
+		}
+
+		return local.status;
+	}
+
+	private string function getContextPath() {
+		/**
+		 * Get the context path
+		 * @return {string} Expanded path
+		 */
+		return expandPath('{lucee-' & request.adminType & '-directory}');
+	}
+}

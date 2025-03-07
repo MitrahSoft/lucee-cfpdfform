@@ -13,38 +13,18 @@ component
 
 
 	/** custom tag interface method */
-	void function init
-		(
-			boolean hasEndTag=false, 
-			component parent
-		) 
-	{
-
+	void function init(boolean hasEndTag=false, component parent) {
 		variables.hasEndTag = arguments.hasEndTag;
 		variables.parent = arguments.parent;
 	}
 
-	public boolean function onStartTag
-		(
-			required struct attributes, 
-			required struct caller
-		)
-	{
+	public boolean function onStartTag(required struct attributes, required struct caller) {
 		variables.parent.setFormField(arguments.attributes.name, arguments.attributes.value);
-
 		return true;
 	}
 	
-
-	public boolean function onEndTag
-		(
-			required struct attributes, 
-			required struct caller,
-			required string generatedContent
-		)
-	{
+	public boolean function onEndTag(required struct attributes, required struct caller, required string generatedContent) {
 		WriteOutput(generatedContent);
-		
 		return false;
 	}
 
