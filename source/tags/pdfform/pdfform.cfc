@@ -19,18 +19,19 @@ component {
         var local = {};
 
         try {
-            local.fileInput = createObject("java", "java.io.FileInputStream").init(ARGUMENTS.source);
-            local.Loader = createObject("java", "org.apache.pdfbox.Loader");
-            local.pdf = local.Loader.loadPDF(local.fileInput);
+            local.fileInput = createObject("java", "java.io.File").init(ARGUMENTS.source);
+            local.pdf = VARIABLES.Loader.loadPDF(local.fileInput);
             local.pdfForm = local.pdf.getDocumentCatalog().getAcroForm();
             local.stFields = local.pdfForm.getFieldIterator();
             while (local.stFields.hasNext()) {
                 var fieldName = local.stFields.next();
                 stFormFields[fieldName.getPartialName()] = fieldName.getValueAsString();
             }
+        } 
+        catch (any e) {
+            writeDump(e);
         } finally {
-            if (isObject(local.pdf)) local.pdf.close();
-            if (isObject(local.fileInput)) local.fileInput.close();
+            if (structKeyExists(local, "pdf") && isObject(local.pdf)) local.pdf.close();
         }
 
         return stFormFields;
@@ -65,18 +66,18 @@ component {
         var exportFDFData = structNew("linked");
 
         try {
-            local.fileInput = createObject("java", "java.io.FileInputStream").init(ARGUMENTS.source);
-            local.Loader = createObject("java", "org.apache.pdfbox.Loader");
-            local.pdf = local.Loader.loadPDF(local.fileInput);
+            local.fileInput = createObject("java", "java.io.File").init(ARGUMENTS.source);
+            local.pdf = VARIABLES.Loader.loadPDF(local.fileInput);
             local.pdfForm = local.pdf.getDocumentCatalog().getAcroForm();
 
             // Determine the correct path
             local.fdfPath = isAbsolutePath(arguments.fdfData) ? arguments.fdfData : getDirectoryFromPath(cgi.cf_template_path) & arguments.fdfData;
 
             local.pdfForm.exportFDF().save(local.fdfPath);
+        } catch (any e) {
+            writeDump(e);
         } finally {
-            if (isObject(local.pdf)) local.pdf.close();
-            if (isObject(local.fileInput)) local.fileInput.close();
+            if (structKeyExists(local, "pdf") && isObject(local.pdf)) local.pdf.close();
         }
 
         exportFDFData["fdfData"] = "Success";
@@ -108,11 +109,10 @@ component {
         local.ok = true;
 
         try {
-            local.fileInput = createObject("java", "java.io.FileInputStream").init(ARGUMENTS.source);
+            local.fileInput = createObject("java", "java.io.File").init(ARGUMENTS.source);
             local.newPDF = (structKeyExists(arguments, "destination") && arguments.destination != "") ? arguments.destination : expandpath(getTempDirectory()) & createUUID() & ".pdf";
             local.fileOutput = createObject("java", "java.io.FileOutputStream").init(local.newPDF);
-            local.Loader = createObject("java", "org.apache.pdfbox.Loader");
-            local.pdf = local.Loader.loadPDF(local.fileInput);
+            local.pdf = VARIABLES.Loader.loadPDF(local.fileInput);
             local.pdfForm = local.pdf.getDocumentCatalog().getAcroForm();
             
             if (structKeyExists(arguments, "font") && arguments.font != "") {
@@ -178,13 +178,12 @@ component {
             local.ok = false;
             writeDump(e);
         } finally {
-            if (isObject(local.pdf)) local.pdf.close();
-            if (isObject(local.fdf)) local.fdf.close();
-            if (isObject(local.fileInput)) local.fileInput.close();
-            if (isObject(local.fileOutput)) local.fileOutput.close();
+            if (structKeyExists(local, "pdf") && isObject(local.pdf)) local.pdf.close();
+            if (structKeyExists(local, "fdf") && isObject(local.fdf)) local.fdf.close();
+            if (structKeyExists(local, "fileOutput") && isObject(local.fileOutput)) local.fileOutput.close();
         }
 
-        if (structKeyExists(arguments, "destination") && arguments.destination == "") {        
+        if (structKeyExists(arguments, "destination") && arguments.destination == "") {
             cfcontent(type = "application/pdf", file = local.newPDF, DeleteFile = "Yes");
             cfheader(name = "Content-Disposition", value = "inline; filename=Example.pdf");
         }
