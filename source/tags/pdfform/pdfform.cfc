@@ -122,24 +122,31 @@ component {
 
             // For populating with fdfdata
             if (structKeyExists(arguments, "fdfdata") && arguments.fdfdata != "") {
-                local.fdfFile = arguments.fdfdata;
-                
-                // Create a FileInputStream
-                local.fileInputStream = createObject("java", "java.io.FileInputStream").init(local.fdfFile);
-                // Load the FDFDocument using the static load method
-                local.fdf = VARIABLES.Loader.loadFDF(local.fileInputStream);
-                // Close InputStream after use
-                local.fileInputStream.close();
-                // Import FDF into the PDF form
-                local.pdfForm.importFDF(local.fdf);
-                // Get form field iterator
-                local.stFields = local.pdfForm.getFieldIterator();
 
-                while (local.stFields.hasNext()) {
-                    var fieldName = local.stFields.next();
-                    if (fieldName.getValueAsString() != "") {
-                        arguments.stFormFields[fieldName.getPartialName()] = fieldName.getValueAsString();
-                    }
+                // Create Java objects
+                FDFParser = createObject("java", "org.apache.pdfbox.pdfparser.FDFParser");
+                RandomAccessReadBuffer = createObject("java", "org.apache.pdfbox.io.RandomAccessReadBuffer");
+                Files = createObject("java", "java.nio.file.Files");
+
+                // Read file as byte array
+                File = createObject("java", "java.io.File");
+                filePath = File.init(arguments.fdfdata).toPath();
+                fileBytes = Files.readAllBytes(filePath);
+
+                // Parse FDF file
+                readBuffer = RandomAccessReadBuffer.init(fileBytes);
+                parser = FDFParser.init(readBuffer);
+                fdf = parser.parse();
+
+                // Get fields from FDF document
+                fields = fdf.getCatalog().getFDF().getFields();
+
+                // Iterate through fields and extract values
+                for (i = 0; i < fields.size(); i++) {
+                    field = fields.get(i);
+                    fieldName = field.getPartialFieldName();
+                    fieldValue = IsNull(field.getValue()) ? "" : field.getValue();
+                    arguments.stFormFields[fieldName] = fieldValue.toString();
                 }
             }
         
