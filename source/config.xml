@@ -7,7 +7,6 @@
 		{home-directory}: path to the home directory of the current user of the system
 		{web-root-directory}: path to the web root
 		{system-directory}: path to thesystem directory
-
 -->
 <config>
 	<info>
